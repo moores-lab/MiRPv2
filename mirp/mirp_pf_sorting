@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+MiRP - a microtubule RELION-based pipeline for cryo-EM image processing. 
+MiRP v2 is designed to function with RELION v3.1, and is not compatible with earlier versions of RELION.
+"""
+
+__author__ = 'Alexander D. Cook & Joseph Atherton'
+__license__ = 'GPLv3'
+__version__ = '2.0'
+
+
+import microtubules
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--in_parts', required=True, help='Input _data.star file from Class3D protofilament number classification.')
+parser.add_argument('-o', '--o', required=True, help='Output directory.')
+parser.add_argument('-c', '--conf', required=True, help='Protofilament number assignment confidence threshold. 75 is a good start.')
+parser.add_argument('-r', '--reset_eulerxy', required=False, action='store_true', help='Reset Rot (and prior) and XY to zero, Tilt to 90, and set Psi to Psi prior')
+parser.add_argument('-j', '--j', help='Multi-threading is not supported. This flag is required for function within the RELION GUI.')
+args = parser.parse_args()
+
+mts = microtubules.Microtubules(args.in_parts, args.o)
+
+if args.reset_eulerxy:
+    mts.reset_eulerxy('rlnAngleRot', 'rlnAngleRotPrior', 'rlnAnglePsi', 'rlnAngleTilt', 'rlnOriginXAngst', 'rlnOriginYAngst')
+
+if args.conf:
+    mts.vote_pf_number(args.conf)
+else:
+    mts.vote_pf_number()

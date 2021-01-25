@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+MiRP - a microtubule RELION-based pipeline for cryo-EM image processing. 
+MiRP v2 is designed to function with RELION v3.1, and is not compatible with earlier versions of RELION.
+"""
+
+__author__ = 'Alexander D. Cook & Joseph Atherton'
+__license__ = 'GPLv3'
+__version__ = '2.0'
+
+
+import microtubules
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--in_parts', help='input _data.star ifile from seam checking Class3D')
+parser.add_argument('-o', '--o', help='output folder')
+parser.add_argument('--pf', help='protofilament number')
+parser.add_argument('--ri', help='helical rise')
+parser.add_argument('--c', help='seam class assignment confidence cutoff')
+parser.add_argument('-j', '--j', help='Multi-threading is not supported. This flag is required for function within RELION.')
+args = parser.parse_args()
+
+mts = microtubules.Microtubules(args.in_parts, args.o)
+mts.vote_on_seam(args.c, args.pf, args.ri)
+

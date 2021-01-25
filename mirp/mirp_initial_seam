@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+MiRP - a microtubule RELION-based pipeline for cryo-EM image processing. 
+MiRP v2 is designed to function with RELION v3.1, and is not compatible with earlier versions of RELION.
+"""
+
+__author__ = 'Alexander D. Cook & Joseph Atherton'
+__license__ = 'GPLv3'
+__version__ = '2.0'
+
+
+import microtubules
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--in_parts', required=True, help='Input _data.star file.')
+parser.add_argument('-o', '--o', required=True, help='Output directory.')
+parser.add_argument('--rot', required=False, action='store_true', help='Whether to vote on Rot angle assignment (divergent Rot angles)')
+parser.add_argument('--xy', required=False, action='store_true', help='Whether to vote on X/Y shift assignment ')
+parser.add_argument('--reset_xy', required=False, action='store_true', help='Reset X/Y origin offsets to zero.')
+parser.add_argument('-j', '--j', help='Multi-threading is not supported. This flag is required for function within RELION.')
+args = parser.parse_args()
+
+mts = microtubules.Microtubules(args.in_parts, args.o)
+
+if args.reset_xy:
+    mts.reset_eulerxy('rlnOriginXAngst', 'rlnOriginYAngst')
+
+if args.rot:
+
+    mts.vote_on_rot()        
+
+if args.xy:
+    mts.vote_on_xy()

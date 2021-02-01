@@ -381,7 +381,7 @@ class Microtubules:
                 self._correct_pfregister(pfnum, rise, microtubule)
                 new_mts.append(microtubule)
         
-        self._plot_confidence(confidence_data, self.job_path)
+        self._plot_confidence(confidence_data, cutoff)
         self._plot_seam_stats(new_mts)
         self._data = new_mts
         self.outfile = '%sseamCorrected_data.star' % self.job_path

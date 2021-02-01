@@ -17,15 +17,20 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', help='Starfile to plot microtubule euler angles and XY shifts from.')
-parser.add_argument('-s', help='Give file name, if saving a copy is desired.')
+parser.add_argument('-i', required=True, help='Starfile to plot microtubule euler angles and XY shifts from.')
+parser.add_argument('-o', required=False, help='Give file name, if saving a copy is desired.')
+parser.add_argument('-n', required=False, type=int, help='The number of microtubule to plot.')
 args = parser.parse_args()
 
-mts = microtubules.Microtubules(args.p, '.')
-if args.s:
-    plot_pdf = PdfPages('%s.pdf' % args.s)                
+mts = microtubules.Microtubules(args.i, '.')
+num_mts = mts.mt_tot
+if args.o:
+    plot_pdf = PdfPages('%s.pdf' % args.o)        
 
-for mt in mts[:50]:
+if args.n:
+    num_mts = args.n       
+
+for mt in mts[:num_mts]:
     psi = mt['rlnAnglePsi']
     rot = mt['rlnAngleRot']
     tilt = mt['rlnAngleTilt']
@@ -69,12 +74,12 @@ for mt in mts[:50]:
     sax.set_xlabel('Particle Number')
 
     plt.tight_layout()
-    if args.s:
+    if args.o:
         plot_pdf.savefig(fig)
     else:
         plt.show()
 
-if args.s:
+if args.o:
     plot_pdf.close()
 plt.close()
 

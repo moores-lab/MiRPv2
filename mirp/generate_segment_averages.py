@@ -23,16 +23,21 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_parts', required=True, help='Input starfile (e.g. Class3D/PF_sorting/run_it001_data.star')
 parser.add_argument('-o', '--o', required=True, help='Output folder for segment averages (e.g. Extract/seg_averages')
-parser.add_argument('-r', '--revert', required=False, help='Reverts to non-averaged particles - give the path to the original non-averaged particles (e.g. External/pf_sorting/14pf_data.star)')
+parser.add_argument('-r', '--revert', required=False, help='Reverts to non-averaged particles - give the path to the original extract folder (e.g. External/job011/Micrographs)')
 args = parser.parse_args()
 
 
 if args.revert:
     starfile_data = starfileIO.Starfile(args.in_parts)
     starfile_data.read_star()
-    original_star = starfileIO.Starfile(args.revert)
-    original_star.read_star()
-    starfile_data._datablocks['data_particles']['rlnImageName'] = original_star.get_entry('data_particles', 'rlnImageName')
+    npath = args.revert.split('/')[1:]
+    for ix, i in enumerate(starfile_data.get_entry('data_particles', 'rlnImageName')):
+        sa = i.split('/')
+        reverted = sa[0] 
+        for d in npath:
+            reverted = reverted + '/' + d
+        reverted = reverted + '/' + sa[-1]
+        starfile_data['data_particles']['rlnImageName'][ix] = reverted
     starfile_data.write_star('%s/particles_reverted_data.star' % args.o)
     print('Reverted to original particles from segement averages.\nparticles_reverted_data.star saved to %s' % args.o)
 

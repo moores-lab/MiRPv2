@@ -213,7 +213,7 @@ class Microtubules:
 
 
     ###### Rot angle correction ######
-    def vote_on_rot(self):
+    def vote_on_rot(self, vote_psi):
         self._add_stdout('\nMiRP - voting on Rotation angle for microtubules in %s...\n\n' %  self.starfile_in, False)
         cutoff = 8
         corrected_mts = []
@@ -237,6 +237,12 @@ class Microtubules:
                 fit = self._fit_eulerXY(rot_angles, modal_clust)
                 microtubule['rlnAngleRot'] = fit
                 microtubule['rlnAngleRotPrior'] = fit
+                if vote_psi:
+                    psi_angles = microtubule['rlnAnglePsi']
+                    modal_clust, outliers = self._cluster_shallow_slopes(psi_angles, cutoff)
+                    fit = self._fit_eulerXY(psi_angles, modal_clust)
+                    microtubule['rlnAnglePsi'] = fit
+                    microtubule['rlnAnglePsiPrior'] = fit
                 corrected_mts.append(microtubule)
                 self._plot_rot_vote(outliers, rot_angles, microtubule['rlnAngleRot'], plot_pdf)
         plot_pdf.close()
@@ -284,7 +290,7 @@ class Microtubules:
 
 
     ###### X/Y shift correction ######
-    def vote_on_xy(self):
+    def vote_on_xy(self, cutoff):
         self._add_stdout('\nMiRP - voting on X/Y shifts for microtubules in %s...\n\n' %  self.starfile_in ,False)
         plot_pdf = PdfPages('%s/XY_corrected.pdf' % self.job_path)                
         corrected_mts = []
@@ -299,8 +305,8 @@ class Microtubules:
             self._add_stdout('Correcting microtubule %i of %i' % (ix, self.mt_tot), True)
             Xsh, Ysh = microtubule['rlnOriginXAngst'], microtubule['rlnOriginYAngst']
             #find most populated linear region (modal cluster)
-            Xmodal_clust = max(self._cluster_breaks(Xsh, 4), key = len)
-            Ymodal_clust = max(self._cluster_breaks(Ysh, 4), key = len)
+            Xmodal_clust = max(self._cluster_breaks(Xsh, cutoff), key = len)
+            Ymodal_clust = max(self._cluster_breaks(Ysh, cutoff), key = len)
             if Xmodal_clust == [0]:
                 Xcorr = [0 for x in range(1, len(Xsh)+1)]
                 Ycorr = [0 for x in range(1, len(Ysh)+1)]

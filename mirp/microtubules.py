@@ -213,7 +213,7 @@ class Microtubules:
 
 
     ###### Rot angle correction ######
-    def vote_on_rot(self, vote_psi):
+    def vote_on_rot(self):
         self._add_stdout('\nMiRP - voting on Rotation angle for microtubules in %s...\n\n' %  self.starfile_in, False)
         cutoff = 8
         corrected_mts = []
@@ -237,12 +237,12 @@ class Microtubules:
                 fit = self._fit_eulerXY(rot_angles, modal_clust)
                 microtubule['rlnAngleRot'] = fit
                 microtubule['rlnAngleRotPrior'] = fit
-                if vote_psi:
-                    psi_angles = microtubule['rlnAnglePsi']
-                    modal_clust, outliers = self._cluster_shallow_slopes(psi_angles, cutoff)
-                    fit = self._fit_eulerXY(psi_angles, modal_clust)
-                    microtubule['rlnAnglePsi'] = fit
-                    microtubule['rlnAnglePsiPrior'] = fit
+                #some datasets have minority psi flips that never disappear, so correct them here
+                psi_angles = microtubule['rlnAnglePsi']
+                modal_clust, outliers = self._cluster_shallow_slopes(psi_angles, cutoff)
+                fit = self._fit_eulerXY(psi_angles, modal_clust)
+                microtubule['rlnAnglePsi'] = fit
+                microtubule['rlnAnglePsiPrior'] = fit
                 corrected_mts.append(microtubule)
                 self._plot_rot_vote(outliers, rot_angles, microtubule['rlnAngleRot'], plot_pdf)
         plot_pdf.close()

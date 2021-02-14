@@ -30,4 +30,4 @@ if args.reset_eulerxy:
 if args.conf:
     mts.vote_pf_number(args.conf)
 else:
-    mts.vote_pf_number()
+    mts.vote_pf_number(0)

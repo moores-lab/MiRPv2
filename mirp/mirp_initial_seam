@@ -20,8 +20,7 @@ parser.add_argument('-o', '--o', required=True, help='Output directory.')
 parser.add_argument('--rot', required=False, action='store_true', help='Whether to vote on Rot angle assignment (divergent Rot angles)')
 parser.add_argument('--xy', required=False, action='store_true', help='Whether to vote on X/Y shift assignment ')
 parser.add_argument('--reset_xy', required=False, action='store_true', help='Reset X/Y origin offsets to zero.')
-parser.add_argument('--vote_psi', required=False, action='store_true', help='Whether to pick the most commonly assigned Psi angle for each microtubule.')
-parser.add_argument('--xy_cutoff', required=False, help='Cutoff for clustering X/Y shifts.')
+parser.add_argument('--xy_cutoff', required=False, help='Untested. Cutoff for clustering X/Y shifts.')
 parser.add_argument('-j', '--j', help='Multi-threading is not supported. This flag is required for function within RELION.')
 args = parser.parse_args()
 
@@ -31,10 +30,7 @@ if args.reset_xy:
     mts.reset_eulerxy('rlnOriginXAngst', 'rlnOriginYAngst')
 
 if args.rot:
-    if args.vote_psi:
-        mts.vote_on_rot(True)
-    else:
-        mts.vote_on_rot(False)        
+    mts.vote_on_rot()
 
 if args.xy:
     if args.xy_cutoff:

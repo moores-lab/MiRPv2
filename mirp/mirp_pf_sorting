@@ -17,8 +17,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_parts', required=True, help='Input _data.star file from Class3D protofilament number classification.')
 parser.add_argument('-o', '--o', required=True, help='Output directory.')
-parser.add_argument('-c', '--conf', required=True, help='Protofilament number assignment confidence threshold. 75 is a good start.')
-parser.add_argument('-r', '--reset_eulerxy', required=False, action='store_true', help='Reset Rot (and prior) and XY to zero, Tilt to 90, and set Psi to Psi prior')
+parser.add_argument('--conf', required=True, help='Protofilament number assignment confidence threshold. 75 is a good start.')
+parser.add_argument('--reset_eulerxy', required=False, action='store_true', help='Reset Rot (and prior) and XY to zero, Tilt to 90, and set Psi to Psi prior')
 parser.add_argument('-j', '--j', help='Multi-threading is not supported. This flag is required for function within the RELION GUI.')
 args = parser.parse_args()
 

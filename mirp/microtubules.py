@@ -162,8 +162,7 @@ class Microtubules:
         
         stats = starfileIO.Starfile('%s/pf_number_sorting_stats.star' % self.job_path)
         gen = {'rlnTotalNumberTubes': uncorr_total_mts,
-               'mirpTotalNumberTubes': corr_total_mts,
-               'mirpPredictedChangesInPfNumber': corr_total_mts - uncorr_total_mts}
+               'mirpTotalNumberTubes': corr_total_mts}
         pf = {'mtProtofilamentNumber': [11, 12, 13, 14, 15, 16],
               'rlnClassDistribution': [per(uncorr_class[i], uncorr_total_ptcls) for i in range(1, 7)],
               'mirpClassDistribution': [per(corr_class[i], corr_total_ptcls) for i in range(1, 7)]}
@@ -171,10 +170,8 @@ class Microtubules:
         stats.add_datablock('data_percent_protofilament_number', pf)
         stats.write_star('%s/pf_number_sorting_stats.star' % self.job_path)
 
-        changes = stats.get_entry('data_general', 'mirpPredictedChangesInPfNumber')        
         pfnums = stats.get_entry('data_percent_protofilament_number', 'mtProtofilamentNumber')
         p_pfnum = stats.get_entry('data_percent_protofilament_number', 'mirpClassDistribution')
-        self._add_stdout('\n\nTotal predicted changes in protofilament number: %i' % changes, False)
         self._add_stdout('\nData composed of:', False)
         for pf, per in zip(pfnums, p_pfnum):
             self._add_stdout(' %i %iPF ' % (per, pf), False)
@@ -239,7 +236,7 @@ class Microtubules:
                 microtubule['rlnAngleRotPrior'] = fit
                 #some datasets have minority psi flips that never disappear, so correct them here
                 psi_angles = microtubule['rlnAnglePsi']
-                modal_clust, outliers = self._cluster_shallow_slopes(psi_angles, cutoff)
+                modal_clust, _ = self._cluster_shallow_slopes(psi_angles, cutoff)
                 fit = self._fit_eulerXY(psi_angles, modal_clust)
                 microtubule['rlnAnglePsi'] = fit
                 microtubule['rlnAnglePsiPrior'] = fit

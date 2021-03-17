@@ -375,7 +375,7 @@ class Microtubules:
                 # correct microtubules with alpha/beta-tubulin out of register
                 if top_class > pfnum:
                     self._shift_along_z(microtubule, 41)  
-                    # replace all class assignments with the modal class
+                    #replace all class assignments with the modal class
                     microtubule['rlnClassNumber'] = [top_class - pfnum for _ in range(mt_len)]
                 else:
                     microtubule['rlnClassNumber'] = [top_class for _ in range(mt_len)]
@@ -431,8 +431,8 @@ class Microtubules:
                 mt['rlnAngleRotPrior'][i] = rot + Drot
             except KeyError:
                 pass
-            #correct the X/Y shifts to account for the change in Rot
-            self._shift_along_z(mt, seampos*rise)
+        #correct the X/Y shifts to account for the change in Rot
+        self._shift_along_z(mt, seampos*rise)
 
     #translate particles along the microtubule z-axis using psi angle and desired z-axis translation (hypotenuse) to edit the x/y shifts
     def _shift_along_z(self, mt, shift):
@@ -445,7 +445,6 @@ class Microtubules:
             mt['rlnOriginXAngst'][i] = xsh + dx
             mt['rlnOriginYAngst'][i] = ysh + dy
             
-
 
     ###### Microtubule operations ######
     #takes any number of relion labels and sets their values to zero

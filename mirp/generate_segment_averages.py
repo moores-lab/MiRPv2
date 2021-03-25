@@ -23,7 +23,7 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_parts', required=True, help='Input starfile (e.g. Class3D/PF_sorting/run_it001_data.star')
-parser.add_argument('-o', '--o', required=True, help='Output folder for segment averages (e.g. Extract/seg_averages')
+parser.add_argument('-o', '--o', required=True, help='Output folder for segment averages (e.g. Extract/seg_averages)')
 args = parser.parse_args()
 
 #can only make a new directory for segment averages (to avoid overwriting something else)
@@ -52,9 +52,15 @@ for ix, microtubule in enumerate(mts):
 
     #2D transform partices prior to averaging
     for ptcl_index in range(mt_len):
-        psi = microtubule['rlnAnglePsi'][ptcl_index]
-        xsh = microtubule['rlnOriginXAngst'][ptcl_index] / mts.apix
-        ysh = microtubule['rlnOriginYAngst'][ptcl_index] / mts.apix
+        try:
+            psi = microtubule['rlnAnglePsi'][ptcl_index]
+        except KeyError:
+            psi = microtubule['rlnAnglePsiPrior'][ptcl_index]
+        try:
+            xsh = microtubule['rlnOriginXAngst'][ptcl_index] / mts.apix
+            ysh = microtubule['rlnOriginYAngst'][ptcl_index] / mts.apix
+        except KeyError:
+            xsh, ysh = 0, 0
         t = EMAN2.Transform()
         t.set_params({'type':'2d', 'alpha':psi, 'tx':xsh, 'ty':ysh})
         microtubule['images'][ptcl_index].transform(t)
@@ -67,9 +73,15 @@ for ix, microtubule in enumerate(mts):
             avg.add_image(microtubule['images'][i])
         avg_img = avg.finish()
         #transform segment average back to original position and save
-        psi = microtubule['rlnAnglePsi'][ptcl_index]
-        xsh = microtubule['rlnOriginXAngst'][ptcl_index] / mts.apix
-        ysh = microtubule['rlnOriginYAngst'][ptcl_index] / mts.apix
+        try:
+            psi = microtubule['rlnAnglePsi'][ptcl_index]
+        except KeyError:
+            psi = microtubule['rlnAnglePsiPrior'][ptcl_index]
+        try:
+            xsh = microtubule['rlnOriginXAngst'][ptcl_index] / mts.apix
+            ysh = microtubule['rlnOriginYAngst'][ptcl_index] / mts.apix
+        except KeyError:
+            xsh, ysh = 0, 0
         t = EMAN2.Transform()
         t.set_params({'type':'2d', 'alpha':-psi, 'tx':-xsh, 'ty':-ysh})
         avg_img.transform(t)
